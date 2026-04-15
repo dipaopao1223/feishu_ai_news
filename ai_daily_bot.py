@@ -204,12 +204,12 @@ def summarize_with_llm(raw_news: str) -> str:
 
 
 def send_to_feishu(summary: str):
-    """发送消息卡片到飞书"""
+    """发送消息到飞书"""
     if not FEISHU_WEBHOOK_URL:
         print("[ERROR] 未配置 FEISHU_WEBHOOK_URL")
         return
 
-    # 构造富文本消息卡片
+    # 构造富文本消息（interactive 卡片 + 关键词 AI）
     card = {
         "msg_type": "interactive",
         "card": {
@@ -222,11 +222,8 @@ def send_to_feishu(summary: str):
             },
             "elements": [
                 {
-                    "tag": "div",
-                    "text": {
-                        "tag": "lark_md",
-                        "content": f"🔔 AI\n\n{summary}"
-                    }
+                    "tag": "markdown",
+                    "content": summary
                 },
                 {
                     "tag": "hr"
@@ -236,7 +233,7 @@ def send_to_feishu(summary: str):
                     "elements": [
                         {
                             "tag": "plain_text",
-                            "content": f"来源：少数派 / 36氪 / TechCrunch / The Verge / Product Hunt | 由 AI 从 PM 视角归纳整理"
+                            "content": "来源：少数派 / 36氪 / TechCrunch / The Verge / Product Hunt | AI ToC 日报 🤖"
                         }
                     ]
                 }
@@ -253,8 +250,32 @@ def send_to_feishu(summary: str):
             print("[INFO] ✅ 飞书推送成功！")
         else:
             print(f"[WARN] 飞书返回异常: {result}")
+            # 如果是关键词问题，改用text格式重试
+            if result.get("code") == 19024:
+                print("[INFO] 切换为text格式...")
+                send_text_fallback(summary)
     except Exception as e:
         print(f"[ERROR] 飞书推送失败: {e}")
+        # 网络异常时也尝试text格式
+        send_text_fallback(summary)
+
+
+def send_text_fallback(summary: str):
+    """text格式兜底（绕过关键词验证）"""
+    payload = {
+        "msg_type": "text",
+        "content": {
+            "text": f"📱 AI ToC 产品日报 | {TODAY} {WEEKDAY}\n\n{summary}\n\n---\n来源：少数派/36氪/TechCrunch/The Verge/Product Hunt | AI ToC 日报 🤖"
+        }
+    }
+    try:
+        resp = requests.post(FEISHU_WEBHOOK_URL, json=payload, timeout=15)
+        result = resp.json()
+        print(f"[INFO] Text格式飞书返回: {result}")
+        if result.get("code") == 0 or result.get("StatusCode") == 0:
+            print("[INFO] ✅ Text推送成功！")
+    except Exception as e:
+        print(f"[ERROR] Text兜底也失败了: {e}")
 
 
 # ─────────────────────────────────────────────
