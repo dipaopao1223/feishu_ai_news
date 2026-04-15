@@ -225,7 +225,7 @@ def send_to_feishu(summary: str):
                     "tag": "div",
                     "text": {
                         "tag": "lark_md",
-                        "content": summary
+                        "content": f"🔔 AI\n\n{summary}"
                     }
                 },
                 {
@@ -248,6 +248,7 @@ def send_to_feishu(summary: str):
         resp = requests.post(FEISHU_WEBHOOK_URL, json=card, timeout=15)
         resp.raise_for_status()
         result = resp.json()
+        print(f"[INFO] 飞书返回: {result}")
         if result.get("code") == 0 or result.get("StatusCode") == 0:
             print("[INFO] ✅ 飞书推送成功！")
         else:
