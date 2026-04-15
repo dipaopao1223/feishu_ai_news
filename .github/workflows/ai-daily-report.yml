@@ -5,17 +5,20 @@ on:
     - cron: '30 0 * * *'   # UTC 00:30 = 北京时间 08:30
   workflow_dispatch:         # 支持手动触发测试
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # 兼容 Node.js 24
+
 jobs:
   send-report:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Install dependencies
         run: pip install requests
