@@ -63,6 +63,24 @@ RSS_SOURCES = [
         "keywords": ["AI", ""],
         "focus": "海外最新AI产品上线"
     },
+    {
+        "name": "量子位",
+        "url": "https://www.qbitai.com/feed",
+        "keywords": ["AI", "人工智能", "大模型", "产品", "发布", "用户", "应用"],
+        "focus": "国内AI前沿资讯与产品动态"
+    },
+    {
+        "name": "机器之心",
+        "url": "https://www.jiqizhixin.com/rss",
+        "keywords": ["AI", "人工智能", "大模型", "产品", "应用", "发布"],
+        "focus": "国内AI专业媒体报道"
+    },
+    {
+        "name": "数字生命卡兹克",
+        "url": "https://www.jintiankansha.com/rss/column/euZCfLlKpL",
+        "keywords": [],
+        "focus": "AI干货与产品应用，ToC视角"
+    },
 ]
 
 # ─────────────────────────────────────────────
@@ -233,7 +251,7 @@ def send_to_feishu(summary: str):
                     "elements": [
                         {
                             "tag": "plain_text",
-                            "content": "来源：少数派 / 36氪 / TechCrunch / The Verge / Product Hunt | AI ToC 日报 🤖"
+                            "content": "来源：少数派 / 36氪 / 量子位 / 机器之心 / 数字生命卡兹克 / TechCrunch / The Verge / Product Hunt | AI ToC 日报 🤖"
                         }
                     ]
                 }
@@ -265,7 +283,7 @@ def send_text_fallback(summary: str):
     payload = {
         "msg_type": "text",
         "content": {
-            "text": f"📱 AI ToC 产品日报 | {TODAY} {WEEKDAY}\n\n{summary}\n\n---\n来源：少数派/36氪/TechCrunch/The Verge/Product Hunt | AI ToC 日报 🤖"
+            "text": f"📱 AI ToC 产品日报 | {TODAY} {WEEKDAY}\n\n{summary}\n\n---\n来源：少数派/36氪/量子位/机器之心/数字生命卡兹克/TechCrunch/The Verge/Product Hunt | AI ToC 日报 🤖"
         }
     }
     try:
